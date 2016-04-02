@@ -29,7 +29,7 @@ def process_file(fn, output_dir, handler):
         if fn.endswith('.osm.bz2'):
             with bz2.BZ2File(fn) as f:
                 osmxml.parse(f, functools.partial(handler.process_iteration, iteration=i))
-        elif f.endswith('.osm'):
+        elif fn.endswith('.osm'):
             with open(fn, 'rt') as f:
                 osmxml.parse(f, functools.partial(handler.process_iteration, iteration=i))
         t1 = time.time()
