@@ -28,11 +28,25 @@ _TRUNK_NO_LIT = """На трассе (highway=trunk) не указано нал�
 Список найденных трасс (highway=trunk): ways.txt
 """
 
+_TRUNK_NO_LANES = """На трассе (highway=trunk) не указано количество полос (lanes=*).
+
+Что нужно сделать:
+1. Выяснить, сколько полос на данном участке трассы.
+2. Добавить тег lanes
+
+Ссылки по теме:
+- http://wiki.openstreetmap.org/wiki/RU:Key:lanes
+- http://wiki.openstreetmap.org/wiki/RU:Tag:highway%3Dtrunk
+
+Список найденных участков трасс (highway=trunk): ways.txt
+"""
+
 
 class HighwayTrunkChecker(SimpleHandler):
     def __init__(self):
         self._no_maxspeed = set()
         self._no_lit = set()
+        self._no_lanes = set()
 
     def process(self, item):
         if item['tag'] == 'way' and 'highway' in item and item['highway'] == 'trunk':
@@ -40,6 +54,8 @@ class HighwayTrunkChecker(SimpleHandler):
                 self._no_maxspeed.add(item['id'])
             if 'lit' not in item:
                 self._no_lit.add(item['id'])
+            if 'lanes' not in item:
+                self._no_lanes.add(item['id'])
 
     def finish(self, output_dir):
         if self._no_maxspeed:
@@ -64,4 +80,16 @@ class HighwayTrunkChecker(SimpleHandler):
             os.makedirs(os.path.dirname(fn), exist_ok=True)
             with open(fn, 'wt') as f:
                 for way_id in self._no_lit:
+                    f.write('https://www.openstreetmap.org/way/%d\n' % (way_id,))
+
+        if self._no_lanes:
+            fn = output_dir + 'todo/highway/trunk/no_lanes/help.txt'
+            os.makedirs(os.path.dirname(fn), exist_ok=True)
+            with open(fn, 'wt') as f:
+                f.write(_TRUNK_NO_LANES)
+
+            fn = output_dir + 'todo/highway/trunk/no_lanes/ways.txt'
+            os.makedirs(os.path.dirname(fn), exist_ok=True)
+            with open(fn, 'wt') as f:
+                for way_id in self._no_lanes:
                     f.write('https://www.openstreetmap.org/way/%d\n' % (way_id,))
