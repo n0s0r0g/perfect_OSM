@@ -5,9 +5,11 @@ import os
 import sys
 import time
 
+from parsers import osmxml
+
 from handlers.compositehandler import CompositeHandler
 from handlers.checkers.node import NodeChecker
-from parsers import osmxml
+from handlers.checkers.way import WayChecker
 
 
 def process_file(fn, output_dir, handler):
@@ -44,6 +46,7 @@ if __name__ == '__main__':
     composite_handler = CompositeHandler()
     # Add your handlers here:
     composite_handler.add_handler(NodeChecker())
+    composite_handler.add_handler(WayChecker())
     # End of handlers
 
     process_file(args.osm_file, args.output_dir, composite_handler)
