@@ -2,7 +2,7 @@ import os
 
 from handlers.handler import Handler
 
-_HIGHWAY_ROAD_TAGS = {'road', 'track', 'service', 'unclassified', 'residential', 'tertiary', 'tertiary_link',
+_HIGHWAY_ROAD_TAGS = {'road', 'track', 'living_street', 'service', 'unclassified', 'residential', 'tertiary', 'tertiary_link',
                       'secondary', 'secondary_link', 'primary', 'primary_link', 'trunk', 'trunk_link',
                       'motorway', 'motorway_link'}
 
