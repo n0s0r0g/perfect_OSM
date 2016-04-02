@@ -22,11 +22,10 @@ class HighwayTrafficCalmingChecker(Handler):
 
     def process_iteration(self, item, iteration):
         if iteration == 0:
-            if item['tag'] == 'node' and item.get('highway') == 'traffic_calming':
+            if item['tag'] == 'node' and 'traffic_calming' in item:
                 self._not_on_road.add(item['id'])
         elif iteration == 1:
             if self._not_on_road:
-                print(self._not_on_road)
                 if item['tag'] == 'way' and item.get('highway') in _HIGHWAY_ROAD_TAGS:
                     tmp = list(self._not_on_road)
                     highway_nodes = set(item['nodes'])
@@ -39,12 +38,12 @@ class HighwayTrafficCalmingChecker(Handler):
 
     def finish(self, output_dir):
         if self._not_on_road:
-            fn = output_dir + 'errors/highway/traffic_calming/not_on_road/help.txt'
+            fn = output_dir + 'errors/traffic_calming/not_on_road/help.txt'
             os.makedirs(os.path.dirname(fn), exist_ok=True)
             with open(fn, 'wt') as f:
                 f.write(_TRAFFIC_CALMING_NOT_ON_ROAD)
 
-            fn = output_dir + 'errors/highway/traffic_calming/not_on_road/nodes.txt'
+            fn = output_dir + 'errors/traffic_calming/not_on_road/nodes.txt'
             os.makedirs(os.path.dirname(fn), exist_ok=True)
             with open(fn, 'wt') as f:
                 for node_id in self._not_on_road:
