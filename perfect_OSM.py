@@ -15,6 +15,7 @@ from handlers.checkers.highway.trunk_link import HighwayTrunkLinkChecker
 from handlers.checkers.highway.track import HighwayTrackChecker
 from handlers.checkers.shop import ShopChecker
 from handlers.checkers.highway.crossing import HighwayCrossingChecker
+from handlers.checkers.highway.traffic_calming import HighwayTrafficCalmingChecker
 
 
 def process_file(fn, output_dir, handler):
@@ -57,6 +58,7 @@ if __name__ == '__main__':
     composite_handler.add_handler(HighwayTrackChecker())
     composite_handler.add_handler(ShopChecker())
     composite_handler.add_handler(HighwayCrossingChecker())
+    composite_handler.add_handler(HighwayTrafficCalmingChecker())
     # End of handlers
 
     process_file(args.osm_file, args.output_dir, composite_handler)
