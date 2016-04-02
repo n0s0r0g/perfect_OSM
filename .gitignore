@@ -1,0 +1,4 @@
+*.pyc
+__pycache__
+*.osm
+*.osm.bz2
