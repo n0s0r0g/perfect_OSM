@@ -11,6 +11,7 @@ from handlers.compositehandler import CompositeHandler
 from handlers.checkers.node import NodeChecker
 from handlers.checkers.way import WayChecker
 from handlers.checkers.highway.trunk import HighwayTrunkChecker
+from handlers.checkers.highway.trunk_link import HighwayTrunkLinkChecker
 
 
 def process_file(fn, output_dir, handler):
@@ -49,6 +50,7 @@ if __name__ == '__main__':
     composite_handler.add_handler(NodeChecker())
     composite_handler.add_handler(WayChecker())
     composite_handler.add_handler(HighwayTrunkChecker())
+    composite_handler.add_handler(HighwayTrunkLinkChecker())
     # End of handlers
 
     process_file(args.osm_file, args.output_dir, composite_handler)
