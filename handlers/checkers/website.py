@@ -1,4 +1,6 @@
-import urllib
+import urllib.error
+import urllib.parse
+import urllib.request
 
 from handlers.simplehandler import SimpleHandler
 from routines.output import save_items
@@ -6,7 +8,7 @@ from routines.output import save_items
 _USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
 _TIMEOUT = 10
 
-_DEAD_LINKS = """Сайт, указанный в теге website=* недоступен."""
+_DEAD_LINKS = """Сайт, указанный в теге website, contact:website, url или source_ref недоступен."""
 
 
 class WebsiteChecker(SimpleHandler):
@@ -49,8 +51,18 @@ class WebsiteChecker(SimpleHandler):
         return status
 
     def process(self, item):
-        if 'website' in item:
-            if not self._check_url(item['website']):
+        urls = []
+        for url_tag in 'website', 'contact:website', 'url', 'source_ref':
+            if url_tag in item:
+                urls.append(item[url_tag])
+
+        if urls:
+            dead_link = False
+            for url in urls:
+                if not self._check_url(url):
+                    dead_link = True
+                    break
+            if dead_link:
                 self._dead_links.append((item['tag'], item['id']))
 
     def finish(self, output_dir):
