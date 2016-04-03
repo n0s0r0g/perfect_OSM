@@ -1,5 +1,4 @@
-import os
-
+from routines.output import save_ways
 from handlers.handler import Handler
 
 _USELESS_WAY = """Если линия (way):
@@ -48,14 +47,4 @@ class WayChecker(Handler):
         return 2
 
     def finish(self, output_dir):
-        if self._ways:
-            fn = output_dir + 'errors/useless_ways/help.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                f.write(_USELESS_WAY)
-
-            fn = output_dir + 'errors/useless_ways/ways.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                for way_id in self._ways:
-                    f.write('https://www.openstreetmap.org/way/%d\n' % (way_id,))
+        save_ways(output_dir + 'errors/useless_ways/', self._ways, _USELESS_WAY)

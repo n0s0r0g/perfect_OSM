@@ -1,6 +1,5 @@
-import os
-
 from handlers.simplehandler import SimpleHandler
+from routines.output import save_ways
 
 _TRUNK_LINK_NO_ONEWAY = """Для вьезда/сьезда с трассы (highway=trunk_link) не задан тег oneway.
 Для избежания неоднозначности, рекомендуется всегда добавлять тег oneway=*.
@@ -22,14 +21,4 @@ class HighwayTrunkLinkChecker(SimpleHandler):
                 self._no_oneway.add(item['id'])
 
     def finish(self, output_dir):
-        if self._no_oneway:
-            fn = output_dir + 'warnings/highway/trunk_link/no_oneway/help.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                f.write(_TRUNK_LINK_NO_ONEWAY)
-
-            fn = output_dir + 'warnings/highway/trunk_link/no_oneway/ways.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                for way_id in self._no_oneway:
-                    f.write('https://www.openstreetmap.org/way/%d\n' % (way_id,))
+        save_ways(output_dir + 'warnings/highway/trunk_link/no_oneway/', self._no_oneway, _TRUNK_LINK_NO_ONEWAY)

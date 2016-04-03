@@ -1,5 +1,4 @@
-import os
-
+from routines.output import save_nodes
 from handlers.handler import Handler
 
 USELESS_NODE = """Если точка (node):
@@ -56,14 +55,4 @@ class NodeChecker(Handler):
         return 2
 
     def finish(self, output_dir):
-        if self._nodes:
-            fn = output_dir + 'errors/useless_node/help.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                f.write(USELESS_NODE)
-
-            fn = output_dir + 'errors/useless_node/nodes.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                for node_id in self._nodes:
-                    f.write('https://www.openstreetmap.org/node/%d\n' % (node_id,))
+        save_nodes(output_dir + 'errors/useless_node/', self._nodes, USELESS_NODE)

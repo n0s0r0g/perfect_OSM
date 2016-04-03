@@ -1,21 +1,18 @@
-import os
-
 import urllib
-from urllib.request import urlopen, Request
-from urllib.error import HTTPError
 
 from handlers.simplehandler import SimpleHandler
+from routines.output import save_items
 
 _USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
 _TIMEOUT = 10
 
-_WEBSITE_NOT_AVAIL = """Сайт, указанный в теге website=* недоступен."""
+_DEAD_LINKS = """Сайт, указанный в теге website=* недоступен."""
 
 
 class WebsiteChecker(SimpleHandler):
     def __init__(self):
         self._checked = dict()
-        self._not_avail = list()
+        self._dead_links = list()
 
     def _check_url(self, url):
         if url in self._checked:
@@ -38,9 +35,9 @@ class WebsiteChecker(SimpleHandler):
             path = urllib.parse.quote(path)
 
             p_url = urllib.parse.urlunsplit((scheme, netloc, path, query, fragment))
-            req = Request(p_url, headers={'User-Agent': _USER_AGENT})
-            urlopen(req, None, _TIMEOUT)
-        except HTTPError as e:
+            req = urllib.request.Request(p_url, headers={'User-Agent': _USER_AGENT})
+            urllib.request.urlopen(req, None, _TIMEOUT)
+        except urllib.error.HTTPError as e:
             if e.code == 301:  # permanent redirect
                 status = True
         except:
@@ -54,17 +51,7 @@ class WebsiteChecker(SimpleHandler):
     def process(self, item):
         if 'website' in item:
             if not self._check_url(item['website']):
-                self._not_avail.append((item['tag'], item['id']))
+                self._dead_links.append((item['tag'], item['id']))
 
     def finish(self, output_dir):
-        if self._not_avail:
-            fn = output_dir + 'errors/website/not_available/help.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                f.write(_WEBSITE_NOT_AVAIL)
-
-            fn = output_dir + 'errors/website/not_available/items.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                for item_tag, item_id in self._not_avail:
-                    f.write('https://www.openstreetmap.org/%s/%d\n' % (item_tag, item_id))
+        save_items(output_dir + 'errors/website/not_available/', self._dead_links, _DEAD_LINKS)

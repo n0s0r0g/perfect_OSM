@@ -1,6 +1,5 @@
-import os
-
 from handlers.handler import Handler
+from routines.output import save_nodes
 
 _HIGHWAY_ROAD_TAGS = {'road', 'track', 'service', 'unclassified', 'residential', 'tertiary', 'tertiary_link',
                       'secondary', 'secondary_link', 'primary', 'primary_link', 'trunk', 'trunk_link',
@@ -45,14 +44,4 @@ class HighwayCrossingChecker(Handler):
         return 2
 
     def finish(self, output_dir):
-        if self._not_on_road:
-            fn = output_dir + 'errors/highway/crossing/not_on_road/help.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                f.write(_CROSSING_NOT_ON_ROAD)
-
-            fn = output_dir + 'errors/highway/crossing/not_on_road/nodes.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                for node_id in self._not_on_road:
-                    f.write('https://www.openstreetmap.org/node/%d\n' % (node_id,))
+        save_nodes(output_dir + 'errors/highway/crossing/not_on_road/', self._not_on_road, _CROSSING_NOT_ON_ROAD)

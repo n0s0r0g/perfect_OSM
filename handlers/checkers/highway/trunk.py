@@ -1,6 +1,5 @@
-import os
-
 from handlers.simplehandler import SimpleHandler
+from routines.output import save_ways
 
 _TRUNK_NO_MAXSPEED = """На трассе (highway=trunk) не указан maxspeed.
 
@@ -58,38 +57,6 @@ class HighwayTrunkChecker(SimpleHandler):
                 self._no_lanes.add(item['id'])
 
     def finish(self, output_dir):
-        if self._no_maxspeed:
-            fn = output_dir + 'todo/highway/trunk/no_maxspeed/help.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                f.write(_TRUNK_NO_MAXSPEED)
-
-            fn = output_dir + 'todo/highway/trunk/no_maxspeed/ways.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                for way_id in self._no_maxspeed:
-                    f.write('https://www.openstreetmap.org/way/%d\n' % (way_id,))
-
-        if self._no_lit:
-            fn = output_dir + 'todo/highway/trunk/no_lit/help.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                f.write(_TRUNK_NO_LIT)
-
-            fn = output_dir + 'todo/highway/trunk/no_lit/ways.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                for way_id in self._no_lit:
-                    f.write('https://www.openstreetmap.org/way/%d\n' % (way_id,))
-
-        if self._no_lanes:
-            fn = output_dir + 'todo/highway/trunk/no_lanes/help.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                f.write(_TRUNK_NO_LANES)
-
-            fn = output_dir + 'todo/highway/trunk/no_lanes/ways.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                for way_id in self._no_lanes:
-                    f.write('https://www.openstreetmap.org/way/%d\n' % (way_id,))
+        save_ways(output_dir + 'todo/highway/trunk/no_maxspeed/', self._no_maxspeed, _TRUNK_NO_MAXSPEED)
+        save_ways(output_dir + 'todo/highway/trunk/no_lanes/', self._no_lanes, _TRUNK_NO_LANES)
+        save_ways(output_dir + 'todo/highway/trunk/no_lit/', self._no_lit, _TRUNK_NO_LIT)

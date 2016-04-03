@@ -1,6 +1,5 @@
-import os
-
 from handlers.simplehandler import SimpleHandler
+from routines.output import save_ways
 
 _NO_SURFACE = """Для highway=track не задано покрытие (surface).
 
@@ -33,12 +32,4 @@ class HighwayTrackChecker(SimpleHandler):
                 self._no_surface.add(item['id'])
 
     def finish(self, output_dir):
-        if self._no_surface:
-            fn = output_dir + 'todo/highway/track/no_surface/help.txt'
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wt') as f:
-                f.write(_NO_SURFACE)
-            fn = output_dir + 'todo/highway/track/no_surface/ways.txt'
-            with open(fn, 'wt') as f:
-                for way_id in self._no_surface:
-                    f.write('https://www.openstreetmap.org/way/%d\n' % (way_id,))
+        save_ways(output_dir + 'todo/highway/track/no_surface/', self._no_surface, _NO_SURFACE)
