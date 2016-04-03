@@ -17,6 +17,7 @@ from handlers.checkers.shop import ShopChecker
 from handlers.checkers.highway.crossing import HighwayCrossingChecker
 from handlers.checkers.highway.traffic_calming import HighwayTrafficCalmingChecker
 from handlers.checkers.website import WebsiteChecker
+from handlers.checkers.highway.surface import HighwaySurfaceChecker
 
 
 def process_file(fn, output_dir, handler):
@@ -61,6 +62,7 @@ if __name__ == '__main__':
     composite_handler.add_handler(HighwayCrossingChecker())
     composite_handler.add_handler(HighwayTrafficCalmingChecker())
     # composite_handler.add_handler(WebsiteChecker()) # very slow - opens every website from the map!
+    composite_handler.add_handler(HighwaySurfaceChecker())
     # End of handlers
 
     process_file(args.osm_file, args.output_dir, composite_handler)
