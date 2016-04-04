@@ -28,7 +28,7 @@ def save_ways(output_dir, ways, help_text):
     if ways:
         output_dir = _prepare_output_dir(output_dir)
         _save_help(output_dir, help_text)
-        fn = output_dir + 'nodes.txt'
+        fn = output_dir + 'ways.txt'
         with open(fn, 'wt') as f:
             for way_id in ways:
                 f.write('https://www.openstreetmap.org/way/%d\n' % (way_id,))
@@ -38,7 +38,7 @@ def save_relations(output_dir, relations, help_text):
     if relations:
         output_dir = _prepare_output_dir(output_dir)
         _save_help(output_dir, help_text)
-        fn = output_dir + 'nodes.txt'
+        fn = output_dir + 'relations.txt'
         with open(fn, 'wt') as f:
             for relation_id in relations:
                 f.write('https://www.openstreetmap.org/relation/%d\n' % (relation_id,))
