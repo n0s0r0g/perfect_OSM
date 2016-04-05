@@ -1,6 +1,11 @@
 from routines.output import save_ways
 from handlers.handler import Handler
 
+_EMPTY_WAY = """Пустая линия (way).
+
+Список найденных линий: ways.txt
+"""
+
 _USELESS_WAY = """Если линия (way):
 - не имеет тегов
 - не входит в отношение (relation)
@@ -19,7 +24,8 @@ _USELESS_WAY = """Если линия (way):
 
 class WayChecker(Handler):
     def __init__(self):
-        self._ways = set()
+        self._useless_ways = set()
+        self._empty_ways = set()
 
     def process_iteration(self, item, iteration):
         if iteration == 0:
@@ -31,12 +37,14 @@ class WayChecker(Handler):
         if item['tag'] == 'way':
             # add way without user-specified tags
             if set(item.keys()) == {'id', 'tag', 'user', 'timestamp', 'version', 'changeset', 'nodes'}:
-                self._ways.add(item['id'])
+                self._useless_ways.add(item['id'])
+            if not item.get('nodes'):
+                self._empty_ways.add(item['id'])
 
     def second_iteration(self, item):
-        # remove ways used in relations
+        # remove ways used in relations from self._useless_ways
         if item['tag'] == 'relation':
-            ways = self._ways
+            ways = self._useless_ways
             for d in item['members']:
                 if d['type'] == 'way':
                     way_id = d['ref']
@@ -47,4 +55,5 @@ class WayChecker(Handler):
         return 2
 
     def finish(self, output_dir):
-        save_ways(output_dir + 'errors/useless_ways/', self._ways, _USELESS_WAY)
+        save_ways(output_dir + 'errors/way/useless/', self._useless_ways, _USELESS_WAY)
+        save_ways(output_dir + 'errors/way/empty/', self._empty_ways, _EMPTY_WAY)
