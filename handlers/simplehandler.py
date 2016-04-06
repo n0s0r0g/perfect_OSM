@@ -5,7 +5,7 @@ class SimpleHandler(Handler):
     def get_iterations_required(self):
         return 1
 
-    def process_iteration(self, item, iteration):
+    def process_iteration(self, o, iteration):
         if iteration == 0:
             self.process(item)
         else:

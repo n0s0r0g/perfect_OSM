@@ -16,10 +16,10 @@ class CompositeHandler(Handler):
                 m = t
         return m
 
-    def process_iteration(self, item, iteration):
+    def process_iteration(self, o, iteration):
         for handler in self._handlers:
             if handler.get_iterations_required() > iteration:
-                handler.process_iteration(item, iteration)
+                handler.process_iteration(o, iteration)
 
     def finish(self, output_dir):
         for handler in self._handlers:
