@@ -8,7 +8,7 @@ import time
 from parsers import osmxml
 
 from handlers.compositehandler import CompositeHandler
-
+from handlers.example import ExampleHandler
 
 def process_file(fn, output_dir, handler):
     fn = os.path.abspath(fn)
@@ -45,6 +45,7 @@ if __name__ == '__main__':
 
     composite_handler = CompositeHandler()
     # Add your handlers here:
+    composite_handler.add_handler(ExampleHandler())
     # End of handlers
 
     process_file(args.osm_file, args.output_dir, composite_handler)
