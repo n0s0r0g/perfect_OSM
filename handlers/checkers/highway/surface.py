@@ -52,5 +52,5 @@ class HighwaySurfaceChecker(SimpleHandler):
                     self._undoc_surface.append(obj['@id'])
 
     def finish(self, output_dir):
-        save_ways(output_dir + 'warnings/highway/undocumented_surface/', self._undoc_surface, _COMPLEX_SURFACE)
-        save_ways(output_dir + 'todo/highway/complex_surface/', self._complex_surface, _COMPLEX_SURFACE)
+        save_ways(output_dir + 'warnings/highway/surface/undocumented_value/', self._undoc_surface, _COMPLEX_SURFACE)
+        save_ways(output_dir + 'todo/highway/surface/composite_value/', self._complex_surface, _UNDOC_SURFACE)

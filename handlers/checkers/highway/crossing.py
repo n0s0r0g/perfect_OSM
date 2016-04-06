@@ -5,7 +5,7 @@ _HIGHWAY_ROAD_TAGS = {'road', 'track', 'service', 'unclassified', 'residential',
                       'secondary', 'secondary_link', 'primary', 'primary_link', 'trunk', 'trunk_link',
                       'motorway', 'motorway_link'}
 
-_CROSSING_NOT_ON_ROAD = """highway=crossing - пешеходный переход через автомобильную дорогу.
+_CROSSING_NOT_ON_HIGHWAY = """highway=crossing - пешеходный переход через автомобильную дорогу.
 
 Важно:
 Если на автомобильной дороге (highway=*) есть пешеходный переход, то он должен быть
@@ -44,4 +44,4 @@ class HighwayCrossingChecker(Handler):
         return iteration < 2
 
     def finish(self, output_dir):
-        save_nodes(output_dir + 'errors/highway/crossing/not_on_road/', self._not_on_road, _CROSSING_NOT_ON_ROAD)
+        save_nodes(output_dir + 'errors/highway/crossing/not_on_highway/', self._not_on_road, _CROSSING_NOT_ON_HIGHWAY)

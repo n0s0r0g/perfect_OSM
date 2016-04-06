@@ -55,4 +55,4 @@ class NodeChecker(Handler):
         return iteration < 2
 
     def finish(self, output_dir):
-        save_nodes(output_dir + 'errors/useless_node/', self._nodes, USELESS_NODE)
+        save_nodes(output_dir + 'errors/node/useless/', self._nodes, USELESS_NODE)

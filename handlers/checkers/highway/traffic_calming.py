@@ -37,4 +37,4 @@ class HighwayTrafficCalmingChecker(Handler):
         return iteration < 2
 
     def finish(self, output_dir):
-        save_nodes(output_dir + 'errors/traffic_calming/not_on_road/', self._not_on_road, _TRAFFIC_CALMING_NOT_ON_ROAD)
+        save_nodes(output_dir + 'errors/traffic_calming/not_on_highway/', self._not_on_road, _TRAFFIC_CALMING_NOT_ON_ROAD)
