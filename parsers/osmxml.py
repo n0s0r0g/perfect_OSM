@@ -7,9 +7,9 @@ def parse(osm_fn, f):
     event, root = next(context)
     for event, elem in context:
         if event == "end" and elem.tag in {'node', 'way', 'relation'}:
-            item = {'tag': elem.tag, 'id': int(elem.get('id'))}
+            item = {'@type': elem.tag, '@id': int(elem.get('id'))}
             for k in 'user', 'timestamp', 'version', 'changeset':
-                item[k] = elem.get(k)
+                item['@' + k] = elem.get(k)
 
             if elem.tag == 'node':
                 for k in ['lon', 'lat']:
@@ -25,7 +25,7 @@ def parse(osm_fn, f):
                         item[p.get('k')] = p.get('v')
                     if p.tag == 'nd':
                         nodes.append(int(p.get('ref')))
-                item['nodes'] = nodes
+                item['@nodes'] = nodes
 
             if elem.tag == 'relation':
                 members = []
@@ -37,7 +37,7 @@ def parse(osm_fn, f):
                                   'ref': int(p.get('ref')),
                                   'role': p.get('role')}
                         members.append(member)
-                item['members'] = members
+                item['@members'] = members
 
             f(item)
             elem.clear()
