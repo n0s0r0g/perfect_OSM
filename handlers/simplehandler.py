@@ -2,17 +2,14 @@ from handlers.handler import Handler
 
 
 class SimpleHandler(Handler):
-    def get_iterations_required(self):
-        return 1
+    def process_iteration(self, obj, iteration):
+        self.process(obj)
 
-    def process_iteration(self, item, iteration):
-        if iteration == 0:
-            self.process(item)
-        else:
-            raise Exception('invalid iteration = %d (max: %d)' % (iteration, self.get_iterations_required()))
-
-    def process(self, item):
+    def process(self, o):
         raise NotImplementedError('Not implemented.')
+
+    def is_iteration_required(self, iteration):
+        return iteration == 0
 
     def finish(self, output_dir):
         raise NotImplementedError('Not implemented.')

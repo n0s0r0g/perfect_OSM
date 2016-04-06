@@ -15,10 +15,10 @@ class HighwayTrunkLinkChecker(SimpleHandler):
     def __init__(self):
         self._no_oneway = set()
 
-    def process(self, item):
-        if item['tag'] == 'way' and 'highway' in item and item['highway'] == 'trunk_link':
-            if 'oneway' not in item:
-                self._no_oneway.add(item['id'])
+    def process(self, obj):
+        if obj['@type'] == 'way' and obj.get('highway') == 'trunk_link':
+            if 'oneway' not in obj:
+                self._no_oneway.add(obj['@id'])
 
     def finish(self, output_dir):
         save_ways(output_dir + 'warnings/highway/trunk_link/no_oneway/', self._no_oneway, _TRUNK_LINK_NO_ONEWAY)

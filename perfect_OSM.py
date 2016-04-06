@@ -25,8 +25,9 @@ def process_file(fn, output_dir, handler):
     output_dir = os.path.abspath(output_dir)
     if not output_dir.endswith('/'):
         output_dir += '/'
-    iterations_count = handler.get_iterations_required()
-    for i in range(0, iterations_count):
+
+    i = 0
+    while handler.is_iteration_required(i):
         print('iteration: %d' % (i,))
         t0 = time.time()
         if fn.endswith('.osm.bz2'):
@@ -37,6 +38,7 @@ def process_file(fn, output_dir, handler):
                 osmxml.parse(f, functools.partial(handler.process_iteration, iteration=i))
         t1 = time.time()
         print('time: %d seconds' % (int(t1 - t0)))
+        i += 1
     handler.finish(output_dir)
 
 

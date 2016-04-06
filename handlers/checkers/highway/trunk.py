@@ -47,14 +47,14 @@ class HighwayTrunkChecker(SimpleHandler):
         self._no_lit = set()
         self._no_lanes = set()
 
-    def process(self, item):
-        if item['tag'] == 'way' and 'highway' in item and item['highway'] == 'trunk':
-            if 'maxspeed' not in item:
-                self._no_maxspeed.add(item['id'])
-            if 'lit' not in item:
-                self._no_lit.add(item['id'])
-            if 'lanes' not in item:
-                self._no_lanes.add(item['id'])
+    def process(self, obj):
+        if obj['@type'] == 'way' and obj.get('highway') == 'trunk':
+            if 'maxspeed' not in obj:
+                self._no_maxspeed.add(obj['@id'])
+            if 'lit' not in obj:
+                self._no_lit.add(obj['@id'])
+            if 'lanes' not in obj:
+                self._no_lanes.add(obj['@id'])
 
     def finish(self, output_dir):
         save_ways(output_dir + 'todo/highway/trunk/no_maxspeed/', self._no_maxspeed, _TRUNK_NO_MAXSPEED)

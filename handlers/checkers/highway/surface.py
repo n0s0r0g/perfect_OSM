@@ -33,9 +33,9 @@ class HighwaySurfaceChecker(SimpleHandler):
         self._undoc_surface = list()
         self._complex_surface = list()
 
-    def process(self, item):
-        if item['tag'] == 'way' and 'highway' in item and 'surface' in item:
-            surface = item['surface']
+    def process(self, obj):
+        if obj['@type'] == 'way' and 'highway' in obj and 'surface' in obj:
+            surface = obj['surface']
             if surface not in _DOCUMENTED_VALUES:
                 if ';' in surface:
                     documented = True
@@ -45,11 +45,11 @@ class HighwaySurfaceChecker(SimpleHandler):
                             documented = False
                             break
                     if documented:
-                        self._complex_surface.append(item['id'])
+                        self._complex_surface.append(obj['@id'])
                     else:
-                        self._undoc_surface.append(item['id'])
+                        self._undoc_surface.append(obj['@id'])
                 else:
-                    self._undoc_surface.append(item['id'])
+                    self._undoc_surface.append(obj['@id'])
 
     def finish(self, output_dir):
         save_ways(output_dir + 'warnings/highway/undocumented_surface/', self._undoc_surface, _COMPLEX_SURFACE)

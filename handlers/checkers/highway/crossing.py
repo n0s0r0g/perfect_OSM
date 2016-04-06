@@ -27,21 +27,21 @@ class HighwayCrossingChecker(Handler):
     def __init__(self):
         self._not_on_road = set()
 
-    def process_iteration(self, item, iteration):
+    def process_iteration(self, obj, iteration):
         if iteration == 0:
-            if item['tag'] == 'node' and item.get('highway') == 'crossing':
-                self._not_on_road.add(item['id'])
+            if obj['@type'] == 'node' and obj.get('highway') == 'crossing':
+                self._not_on_road.add(obj['@id'])
         elif iteration == 1:
             if self._not_on_road:
-                if item['tag'] == 'way' and item.get('highway') in _HIGHWAY_ROAD_TAGS:
+                if obj['@type'] == 'way' and obj.get('highway') in _HIGHWAY_ROAD_TAGS:
                     tmp = list(self._not_on_road)
-                    highway_nodes = set(item['nodes'])
+                    highway_nodes = set(obj['@nodes'])
                     for node_id in tmp:
                         if node_id in highway_nodes:
                             self._not_on_road.remove(node_id)
 
-    def get_iterations_required(self):
-        return 2
+    def is_iteration_required(self, iteration):
+        return iteration < 2
 
     def finish(self, output_dir):
         save_nodes(output_dir + 'errors/highway/crossing/not_on_road/', self._not_on_road, _CROSSING_NOT_ON_ROAD)

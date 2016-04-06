@@ -31,28 +31,28 @@ class NodeChecker(Handler):
         elif iteration == 1:
             self.second_iteration(item)
 
-    def first_iteration(self, item):
-        if item['tag'] == 'node':
+    def first_iteration(self, obj):
+        if obj['@type'] == 'node':
             # add node without user-specified tags
-            if set(item.keys()) == {'id', 'tag', 'lon', 'lat', 'user', 'timestamp', 'version', 'changeset'}:
-                self._nodes.add(item['id'])
+            if set(obj.keys()) == {'@id', '@type', '@lon', '@lat', '@user', '@timestamp', '@version', '@changeset'}:
+                self._nodes.add(obj['@id'])
 
-    def second_iteration(self, item):
+    def second_iteration(self, obj):
         nodes = self._nodes
         # remove nodes used in ways or relations
-        if item['tag'] == 'way':
-            for node in item['nodes']:
+        if obj['@type'] == 'way':
+            for node in obj['@nodes']:
                 if node in nodes:
                     nodes.remove(node)
-        elif item['tag'] == 'relation':
-            for d in item['members']:
+        elif obj['@type'] == 'relation':
+            for d in obj['@members']:
                 if d['type'] == 'node':
                     node = d['ref']
                     if node in nodes:
                         nodes.remove(node)
 
-    def get_iterations_required(self):
-        return 2
+    def is_iteration_required(self, iteration):
+        return iteration < 2
 
     def finish(self, output_dir):
         save_nodes(output_dir + 'errors/useless_node/', self._nodes, USELESS_NODE)

@@ -1,8 +1,8 @@
 class Handler:
-    def process_iteration(self, item, iteration):
+    def process_iteration(self, obj, iteration):
         raise NotImplementedError('Not implemented.')
 
-    def get_iterations_required(self):
+    def is_iteration_required(self, iteration):
         raise NotImplementedError('Not implemented.')
 
     def finish(self, output_dir):

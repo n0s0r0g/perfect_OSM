@@ -50,11 +50,11 @@ class WebsiteChecker(SimpleHandler):
         self._checked[url] = status
         return status
 
-    def process(self, item):
+    def process(self, obj):
         urls = []
         for url_tag in 'website', 'contact:website', 'url', 'source_ref':
-            if url_tag in item:
-                urls.append(item[url_tag])
+            if url_tag in obj:
+                urls.append(obj[url_tag])
 
         if urls:
             dead_link = False
@@ -63,7 +63,7 @@ class WebsiteChecker(SimpleHandler):
                     dead_link = True
                     break
             if dead_link:
-                self._dead_links.append((item['tag'], item['id']))
+                self._dead_links.append((obj['tag'], obj['id']))
 
     def finish(self, output_dir):
         save_items(output_dir + 'errors/website/not_available/', self._dead_links, _DEAD_LINKS)

@@ -13,10 +13,10 @@ class ShopChecker(SimpleHandler):
     def __init__(self):
         self._no_opening_hours = set()
 
-    def process(self, item):
-        if 'shop' in item:
-            if not 'opening_hours' in item:
-                self._no_opening_hours.add((item['tag'], item['id']))
+    def process(self, obj):
+        if 'shop' in obj:
+            if not 'opening_hours' in obj:
+                self._no_opening_hours.add((obj['@type'], obj['@id']))
 
     def finish(self, output_dir):
         save_items(output_dir + 'todo/shop/no_opening_hours/', self._no_opening_hours, _NO_OPENING_HOURS)
