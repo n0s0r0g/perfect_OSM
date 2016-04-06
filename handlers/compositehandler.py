@@ -8,17 +8,15 @@ class CompositeHandler(Handler):
     def add_handler(self, handler):
         self._handlers.append(handler)
 
-    def get_iterations_required(self):
-        m = 0
+    def is_iteration_required(self, iteration):
         for handler in self._handlers:
-            t = handler.get_iterations_required()
-            if t > m:
-                m = t
-        return m
+            if handler.is_iteration_required(iteration):
+                return True
+        return False
 
     def process_iteration(self, o, iteration):
         for handler in self._handlers:
-            if handler.get_iterations_required() > iteration:
+            if handler.is_iteration_required(iteration):
                 handler.process_iteration(o, iteration)
 
     def finish(self, output_dir):
