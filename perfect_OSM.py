@@ -6,7 +6,6 @@ import sys
 import time
 
 from handlers.compositehandler import CompositeHandler
-from handlers.checkers.node import NodeChecker
 from parsers import osmxml
 
 
@@ -22,7 +21,7 @@ def process_file(fn, output_dir, handler):
         if fn.endswith('.osm.bz2'):
             with bz2.BZ2File(fn) as f:
                 osmxml.parse(f, functools.partial(handler.process_iteration, iteration=i))
-        elif f.endswith('.osm'):
+        elif fn.endswith('.osm'):
             with open(fn, 'rt') as f:
                 osmxml.parse(f, functools.partial(handler.process_iteration, iteration=i))
         t1 = time.time()
@@ -43,7 +42,6 @@ if __name__ == '__main__':
 
     composite_handler = CompositeHandler()
     # Add your handlers here:
-    composite_handler.add_handler(NodeChecker())
     # End of handlers
 
     process_file(args.osm_file, args.output_dir, composite_handler)

@@ -22,7 +22,7 @@ def parse(osm_fn, f):
                 nodes = []
                 for p in elem.iter():
                     if p.tag == 'tag':
-                        item[item.get('k')] = p.get('v')
+                        item[p.get('k')] = p.get('v')
                     if p.tag == 'nd':
                         nodes.append(int(p.get('ref')))
                 item['nodes'] = nodes
