@@ -1,5 +1,5 @@
 class Handler:
-    def process_iteration(self, o, iteration):
+    def process_iteration(self, obj, iteration):
         raise NotImplementedError('Not implemented.')
 
     def is_iteration_required(self, iteration):
