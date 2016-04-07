@@ -1,19 +1,21 @@
 from handlers.handler import Handler
-from routines.output import save_nodes
 
 _HIGHWAY_ROAD_TAGS = {'road', 'track', 'living_street', 'service', 'unclassified', 'residential', 'tertiary',
                       'tertiary_link',
                       'secondary', 'secondary_link', 'primary', 'primary_link', 'trunk', 'trunk_link',
                       'motorway', 'motorway_link'}
 
-_TRAFFIC_CALMING_NOT_ON_ROAD = """highway=traffic_calming - препятствие на дороге, заставляющее снижать скорость.
+_TRAFFIC_CALMING_NOT_ON_ROAD = {
+    'title':'Препятствие не на дороге',
+    'help_text':"""highway=traffic_calming - препятствие на дороге, заставляющее снижать скорость.
 
 Препятствие обозначено точкой с тегом highway=traffic_calming.
 Точка должна быть включена в автомобильную дорогу.
 
 Ссылки по теме:
 - http://wiki.openstreetmap.org/wiki/RU:Key:traffic_calming
-"""
+""",
+}
 
 
 class HighwayTrafficCalmingChecker(Handler):
@@ -22,7 +24,7 @@ class HighwayTrafficCalmingChecker(Handler):
 
     def process_iteration(self, obj, iteration):
         if iteration == 0:
-            if obj['@type'] == 'node' and 'traffic_calming' in obj:
+            if 'traffic_calming' in obj and obj['@type'] == 'node':
                 self._not_on_road.add(obj['@id'])
         elif iteration == 1:
             if self._not_on_road:
@@ -36,5 +38,7 @@ class HighwayTrafficCalmingChecker(Handler):
     def is_iteration_required(self, iteration):
         return iteration < 2
 
-    def finish(self, output_dir):
-        save_nodes(output_dir + 'errors/traffic_calming/not_on_highway/', self._not_on_road, _TRAFFIC_CALMING_NOT_ON_ROAD)
+    def finish(self, issues):
+        issues.add_issue_type('errors/traffic_calming/not_on_highway/', _TRAFFIC_CALMING_NOT_ON_ROAD)
+        for node_id in self._not_on_road:
+            issues.add_issue_obj('errors/traffic_calming/not_on_highway/', 'node', node_id)

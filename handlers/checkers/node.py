@@ -1,7 +1,8 @@
-from routines.output import save_nodes
 from handlers.handler import Handler
 
-USELESS_NODE = """Если точка (node):
+_USELESS_NODE = {
+    'title': 'Бесполезная точка',
+    'help_text': """Если точка (node):
 - не имеет тегов
 - не входит в линию (way)
 - не входит в отношение (relation)
@@ -14,11 +15,10 @@ USELESS_NODE = """Если точка (node):
 2. Постараться заполнить точку полезной информацией.
 3. Если точка была добавлена по ошибке - удалить её.
 
-Список найденных точек: nodes.txt
-
 Ссылки по теме:
 - http://wiki.openstreetmap.org/wiki/Untagged_unconnected_node
-"""
+""",
+}
 
 
 class NodeChecker(Handler):
@@ -54,5 +54,7 @@ class NodeChecker(Handler):
     def is_iteration_required(self, iteration):
         return iteration < 2
 
-    def finish(self, output_dir):
-        save_nodes(output_dir + 'errors/node/useless/', self._nodes, USELESS_NODE)
+    def finish(self, issues):
+        issues.add_issue_type('errors/node/useless', _USELESS_NODE)
+        for node_id in self._nodes:
+            issues.add_issue_obj('errors/node/useless', 'node', node_id)

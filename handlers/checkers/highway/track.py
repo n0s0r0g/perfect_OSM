@@ -1,7 +1,8 @@
 from handlers.simplehandler import SimpleHandler
-from routines.output import save_ways
 
-_NO_SURFACE = """Для highway=track не задано покрытие (surface).
+_NO_SURFACE = {
+    'title': 'Не указано покрытие дороги',
+    'help_text': """Для highway=track не задано покрытие (surface).
 
 Объективные параметры:
 - surface - тип покрытия
@@ -17,9 +18,8 @@ _NO_SURFACE = """Для highway=track не задано покрытие (surfac
 - http://wiki.openstreetmap.org/wiki/RU:Key:surface
 - http://wiki.openstreetmap.org/wiki/RU:Proposed_features/Surface_Quality
 - http://wiki.openstreetmap.org/wiki/User:Danidin9/Variants_of_smooth_surfaces
-
-Список найденных дорог (highway=track): ways.txt
-"""
+""",
+}
 
 
 class HighwayTrackChecker(SimpleHandler):
@@ -31,5 +31,7 @@ class HighwayTrackChecker(SimpleHandler):
             if not 'surface' in obj:
                 self._no_surface.add(obj['@id'])
 
-    def finish(self, output_dir):
-        save_ways(output_dir + 'todo/highway/track/no_surface/', self._no_surface, _NO_SURFACE)
+    def finish(self, issues):
+        issues.add_issue_type('todo/highway/track/no_surface/', _NO_SURFACE)
+        for way_id in self._no_surface:
+            issues.add_issue_obj('todo/highway/track/no_surface/', 'way', way_id)

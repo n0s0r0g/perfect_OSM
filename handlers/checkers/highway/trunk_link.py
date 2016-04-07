@@ -1,14 +1,14 @@
 from handlers.simplehandler import SimpleHandler
-from routines.output import save_ways
 
-_TRUNK_LINK_NO_ONEWAY = """Для вьезда/сьезда с трассы (highway=trunk_link) не задан тег oneway.
+_TRUNK_LINK_NO_ONEWAY = {
+    'title': 'Не указан oneway=*',
+    'help_text': """Для вьезда/сьезда с трассы (highway=trunk_link) не задан тег oneway.
 Для избежания неоднозначности, рекомендуется всегда добавлять тег oneway=*.
 
 Ссылки по теме:
 - http://wiki.openstreetmap.org/wiki/RU:Key:highway
-
-Список найденных вьездов/сьездов (highway=trunk_link): ways.txt
-"""
+""",
+}
 
 
 class HighwayTrunkLinkChecker(SimpleHandler):
@@ -20,5 +20,7 @@ class HighwayTrunkLinkChecker(SimpleHandler):
             if 'oneway' not in obj:
                 self._no_oneway.add(obj['@id'])
 
-    def finish(self, output_dir):
-        save_ways(output_dir + 'warnings/highway/trunk_link/no_oneway/', self._no_oneway, _TRUNK_LINK_NO_ONEWAY)
+    def finish(self, issues):
+        issues.add_issue_type('warnings/highway/trunk_link/no_oneway/', _TRUNK_LINK_NO_ONEWAY)
+        for way_id in self._no_oneway:
+            issues.add_issue_obj('warnings/highway/trunk_link/no_oneway/', 'way', way_id)

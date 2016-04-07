@@ -19,16 +19,18 @@ from handlers.checkers.highway.traffic_calming import HighwayTrafficCalmingCheck
 from handlers.checkers.website import WebsiteChecker
 from handlers.checkers.highway.surface import HighwaySurfaceChecker
 
+from writers.issues import Issues
+from writers.compositewriter import CompositeWriter
+from writers.helptext import HelpTextWriter
+from writers.osm_links import OSMLinksWriter
 
-def process_file(fn, output_dir, handler):
+
+def process_file(fn, handler, writer):
     fn = os.path.abspath(fn)
-    output_dir = os.path.abspath(output_dir)
-    if not output_dir.endswith('/'):
-        output_dir += '/'
 
     i = 0
     while handler.is_iteration_required(i):
-        print('iteration: %d' % (i,))
+        print('check iteration: %d' % (i,))
         t0 = time.time()
         if fn.endswith('.osm.bz2'):
             with bz2.BZ2File(fn) as f:
@@ -39,7 +41,27 @@ def process_file(fn, output_dir, handler):
         t1 = time.time()
         print('time: %d seconds' % (int(t1 - t0)))
         i += 1
-    handler.finish(output_dir)
+
+    issues = Issues()
+    handler.finish(issues)
+
+    writer.process_issues(issues.issue_types, issues.issues)
+
+    i = 0
+    while writer.is_iteration_required(i):
+        print('geometry iteration: %d' % (i,))
+        t0 = time.time()
+        if fn.endswith('.osm.bz2'):
+            with bz2.BZ2File(fn) as f:
+                osmxml.parse(f, functools.partial(writer.process_geometry, iteration=i))
+        elif fn.endswith('.osm'):
+            with open(fn, 'rt') as f:
+                osmxml.parse(f, functools.partial(writer.process_geometry, iteration=i))
+        t1 = time.time()
+        i += 1
+        print('time: %d seconds' % (int(t1 - t0)))
+
+    writer.save()
 
 
 if __name__ == '__main__':
@@ -52,6 +74,10 @@ if __name__ == '__main__':
         print('Error:', file=sys.stderr)
         print('\tFile not found:', args.osm_file, file=sys.stderr)
         sys.exit(1)
+
+    output_dir = os.path.abspath(args.output_dir)
+    if not output_dir.endswith('/'):
+        output_dir += '/'
 
     composite_handler = CompositeHandler()
     # Add your handlers here:
@@ -67,5 +93,11 @@ if __name__ == '__main__':
     composite_handler.add_handler(HighwaySurfaceChecker())
     # End of handlers
 
-    process_file(args.osm_file, args.output_dir, composite_handler)
+    # Writers
+    composite_writer = CompositeWriter()
+    composite_writer.add_writer(HelpTextWriter(output_dir))
+    composite_writer.add_writer(OSMLinksWriter(output_dir))
+    # End of writers
+
+    process_file(args.osm_file, composite_handler, composite_writer)
     print('Done!')

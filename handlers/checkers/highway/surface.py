@@ -1,20 +1,25 @@
 from handlers.simplehandler import SimpleHandler
-from routines.output import save_ways
 
-_COMPLEX_SURFACE = """Тег surface=* состоит из нескольких документированных покрытий.
+_COMPOSITE_SURFACE = {
+    'title': 'Составное значение покрытия дороги',
+    'help_text': """Тег surface=* состоит из нескольких документированных покрытий.
 Например: "asphalt;ground".
 
 Желательно разбить дорогу на участки с однозначным типом покрытия.
 
 Ссылки по теме:
 - http://wiki.openstreetmap.org/wiki/RU:Key:surface
-"""
+""",
+}
 
-_UNDOC_SURFACE = """Значение тега surface=* не задокументированно в wiki.
+_UNDOC_SURFACE = {
+    'title': 'Недокументированное значение покрытия дороги',
+    'help_text': """Значение тега surface=* не задокументированно в wiki.
 
 Ссылки по теме:
 - http://wiki.openstreetmap.org/wiki/RU:Key:surface
-"""
+""",
+}
 
 _DOCUMENTED_VALUES = {
     # paved
@@ -31,7 +36,7 @@ _DOCUMENTED_VALUES = {
 class HighwaySurfaceChecker(SimpleHandler):
     def __init__(self):
         self._undoc_surface = list()
-        self._complex_surface = list()
+        self._composite_surface = list()
 
     def process(self, obj):
         if obj['@type'] == 'way' and 'highway' in obj and 'surface' in obj:
@@ -45,12 +50,16 @@ class HighwaySurfaceChecker(SimpleHandler):
                             documented = False
                             break
                     if documented:
-                        self._complex_surface.append(obj['@id'])
+                        self._composite_surface.append(obj['@id'])
                     else:
                         self._undoc_surface.append(obj['@id'])
                 else:
                     self._undoc_surface.append(obj['@id'])
 
-    def finish(self, output_dir):
-        save_ways(output_dir + 'warnings/highway/surface/undocumented_value/', self._undoc_surface, _COMPLEX_SURFACE)
-        save_ways(output_dir + 'todo/highway/surface/composite_value/', self._complex_surface, _UNDOC_SURFACE)
+    def finish(self, issues):
+        issues.add_issue_type('warnings/highway/surface/undocumented_value/', _UNDOC_SURFACE)
+        for way_id in self._undoc_surface:
+            issues.add_issue_obj('warnings/highway/surface/undocumented_value/', 'way', way_id)
+        issues.add_issue_type('todo/highway/surface/composite_value/', _COMPOSITE_SURFACE)
+        for way_id in self._composite_surface:
+            issues.add_issue_obj('todo/highway/surface/composite_value/', 'way', way_id)

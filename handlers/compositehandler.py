@@ -19,6 +19,6 @@ class CompositeHandler(Handler):
             if handler.is_iteration_required(iteration):
                 handler.process_iteration(obj, iteration)
 
-    def finish(self, output_dir):
+    def finish(self, issues):
         for handler in self._handlers:
-            handler.finish(output_dir)
+            handler.finish(issues)

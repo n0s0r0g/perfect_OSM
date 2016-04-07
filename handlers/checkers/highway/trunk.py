@@ -1,7 +1,8 @@
 from handlers.simplehandler import SimpleHandler
-from routines.output import save_ways
 
-_TRUNK_NO_MAXSPEED = """На трассе (highway=trunk) не указан maxspeed.
+_TRUNK_NO_MAXSPEED = {
+    'title':'Не указано ограничение скорости',
+    'help_text': """На трассе (highway=trunk) не указан maxspeed.
 
 Что нужно сделать:
 1. Выяснить, какое ограничение скорости на данном участке трассы (явное - знак ограничения скорости, либо неявное)
@@ -10,11 +11,12 @@ _TRUNK_NO_MAXSPEED = """На трассе (highway=trunk) не указан maxs
 Ссылки по теме:
 - http://wiki.openstreetmap.org/wiki/RU:Tag:highway%3Dtrunk
 - http://wiki.openstreetmap.org/wiki/RU:Key:maxspeed
+""",
+}
 
-Список найденных трасс (highway=trunk): ways.txt
-"""
-
-_TRUNK_NO_LIT = """На трассе (highway=trunk) не указано наличие освещения (lit=*).
+_TRUNK_NO_LIT = {
+    'title': 'Не указано наличие освещения',
+    'help_text': """На трассе (highway=trunk) не указано наличие освещения (lit=*).
 
 Что нужно сделать:
 1. Выяснить, освещается ли данный участок трассы.
@@ -25,9 +27,12 @@ _TRUNK_NO_LIT = """На трассе (highway=trunk) не указано нал�
 - http://wiki.openstreetmap.org/wiki/Key:lit
 
 Список найденных трасс (highway=trunk): ways.txt
-"""
+""",
+}
 
-_TRUNK_NO_LANES = """На трассе (highway=trunk) не указано количество полос (lanes=*).
+_TRUNK_NO_LANES = {
+    'title': 'Не указано количество полос',
+    'help_text': """На трассе (highway=trunk) не указано количество полос (lanes=*).
 
 Что нужно сделать:
 1. Выяснить, сколько полос на данном участке трассы.
@@ -38,7 +43,8 @@ _TRUNK_NO_LANES = """На трассе (highway=trunk) не указано ко�
 - http://wiki.openstreetmap.org/wiki/RU:Tag:highway%3Dtrunk
 
 Список найденных участков трасс (highway=trunk): ways.txt
-"""
+""",
+}
 
 
 class HighwayTrunkChecker(SimpleHandler):
@@ -56,7 +62,15 @@ class HighwayTrunkChecker(SimpleHandler):
             if 'lanes' not in obj:
                 self._no_lanes.add(obj['@id'])
 
-    def finish(self, output_dir):
-        save_ways(output_dir + 'todo/highway/trunk/no_maxspeed/', self._no_maxspeed, _TRUNK_NO_MAXSPEED)
-        save_ways(output_dir + 'todo/highway/trunk/no_lanes/', self._no_lanes, _TRUNK_NO_LANES)
-        save_ways(output_dir + 'todo/highway/trunk/no_lit/', self._no_lit, _TRUNK_NO_LIT)
+    def finish(self, issues):
+        issues.add_issue_type('todo/highway/trunk/no_maxspeed/', _TRUNK_NO_MAXSPEED)
+        for way_id in self._no_maxspeed:
+            issues.add_issue_obj('todo/highway/trunk/no_maxspeed/', 'way', way_id)
+
+        issues.add_issue_type('todo/highway/trunk/no_lanes/', _TRUNK_NO_LANES)
+        for way_id in self._no_lanes:
+            issues.add_issue_obj('todo/highway/trunk/no_lanes/', 'way', way_id)
+
+        issues.add_issue_type('todo/highway/trunk/no_lit/', _TRUNK_NO_LIT)
+        for way_id in self._no_lit:
+            issues.add_issue_obj('todo/highway/trunk/no_lit/', 'way', way_id)

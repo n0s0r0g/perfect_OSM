@@ -3,7 +3,6 @@ import urllib.parse
 import urllib.request
 
 from handlers.simplehandler import SimpleHandler
-from routines.output import save_items
 
 _USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
 _TIMEOUT = 10
@@ -65,5 +64,7 @@ class WebsiteChecker(SimpleHandler):
             if dead_link:
                 self._dead_links.append((obj['tag'], obj['id']))
 
-    def finish(self, output_dir):
-        save_items(output_dir + 'errors/website/not_available/', self._dead_links, _DEAD_LINKS)
+    def finish(self, issues):
+        issues.add_issue_type('errors/website/not_available/', _DEAD_LINKS)
+        for obj_type, obj_id in self._dead_links:
+            issues.add_issue_obj('errors/website/not_available/', obj_type, obj_id)

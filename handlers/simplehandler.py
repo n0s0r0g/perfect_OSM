@@ -11,5 +11,5 @@ class SimpleHandler(Handler):
     def is_iteration_required(self, iteration):
         return iteration == 0
 
-    def finish(self, output_dir):
+    def finish(self, issues):
         raise NotImplementedError('Not implemented.')

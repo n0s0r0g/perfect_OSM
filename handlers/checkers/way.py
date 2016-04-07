@@ -1,12 +1,13 @@
-from routines.output import save_ways
 from handlers.handler import Handler
 
-_EMPTY_WAY = """Пустая линия (way).
+_EMPTY_WAY = {'title': 'Пустая линия',
+    'help_text': """Пустая линия (way).
+""",
+}
 
-Список найденных линий: ways.txt
-"""
-
-_USELESS_WAY = """Если линия (way):
+_USELESS_WAY = {
+    'title': 'Бесполезная линия',
+    'help_text': """Если линия (way):
 - не имеет тегов
 - не входит в отношение (relation)
 
@@ -17,9 +18,8 @@ _USELESS_WAY = """Если линия (way):
 1. Разобраться, почему такая линия появилась.
 2. Постараться заполнить линию полезной информацией.
 3. Если линия была добавлена по ошибке - удалить её.
-
-Список найденных линий: ways.txt
-"""
+""",
+}
 
 
 class WayChecker(Handler):
@@ -54,6 +54,11 @@ class WayChecker(Handler):
     def is_iteration_required(self, iteration):
         return iteration < 2
 
-    def finish(self, output_dir):
-        save_ways(output_dir + 'errors/way/useless/', self._useless_ways, _USELESS_WAY)
-        save_ways(output_dir + 'errors/way/empty/', self._empty_ways, _EMPTY_WAY)
+    def finish(self, issues):
+        issues.add_issue_type('errors/way/empty/', _EMPTY_WAY)
+        for way_id in self._empty_ways:
+            issues.add_issue_obj('errors/way/empty/', 'way', way_id)
+
+        issues.add_issue_type('errors/way/useless/', _USELESS_WAY)
+        for way_id in self._useless_ways:
+            issues.add_issue_obj('errors/way/useless/', 'way', way_id)
