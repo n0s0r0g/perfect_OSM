@@ -23,6 +23,7 @@ from writers.issues import Issues
 from writers.compositewriter import CompositeWriter
 from writers.helptext import HelpTextWriter
 from writers.osm_links import OSMLinksWriter
+from writers.gpx import GPXWriter
 
 
 def process_file(fn, handler, writer):
@@ -97,6 +98,7 @@ if __name__ == '__main__':
     composite_writer = CompositeWriter()
     composite_writer.add_writer(HelpTextWriter(output_dir))
     composite_writer.add_writer(OSMLinksWriter(output_dir))
+    composite_writer.add_writer(GPXWriter(output_dir))
     # End of writers
 
     process_file(args.osm_file, composite_handler, composite_writer)
