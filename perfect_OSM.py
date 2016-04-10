@@ -19,6 +19,7 @@ from handlers.checkers.highway.traffic_calming import HighwayTrafficCalmingCheck
 from handlers.checkers.website import WebsiteChecker
 from handlers.checkers.highway.surface import HighwaySurfaceChecker
 from handlers.checkers.type import TypeChecker
+from handlers.checkers.phone import PhoneChecker
 
 from writers.issues import Issues
 from writers.compositewriter import CompositeWriter
@@ -94,6 +95,7 @@ if __name__ == '__main__':
     # composite_handler.add_handler(WebsiteChecker()) # very slow - opens every website from the map!
     composite_handler.add_handler(HighwaySurfaceChecker())
     composite_handler.add_handler(TypeChecker())
+    composite_handler.add_handler(PhoneChecker())
     # End of handlers
 
     # Writers
