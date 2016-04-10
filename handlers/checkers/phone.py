@@ -3,7 +3,7 @@ import re
 from handlers.simplehandler import SimpleHandler
 
 _BAD_PHONE = {
-    'title': 'Некорректный номер телефона',
+    'title': 'Некорректный формат номера телефона',
     'help_text': """Номер телефона указан в некорректном формате.""",
 }
 
