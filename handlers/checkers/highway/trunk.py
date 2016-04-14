@@ -49,18 +49,18 @@ _TRUNK_NO_LANES = {
 
 class HighwayTrunkChecker(SimpleHandler):
     def __init__(self):
-        self._no_maxspeed = set()
-        self._no_lit = set()
-        self._no_lanes = set()
+        self._no_maxspeed = []
+        self._no_lit = []
+        self._no_lanes = []
 
     def process(self, obj):
         if obj['@type'] == 'way' and obj.get('highway') == 'trunk':
             if 'maxspeed' not in obj:
-                self._no_maxspeed.add(obj['@id'])
+                self._no_maxspeed.append(obj['@id'])
             if 'lit' not in obj:
-                self._no_lit.add(obj['@id'])
+                self._no_lit.append(obj['@id'])
             if 'lanes' not in obj:
-                self._no_lanes.add(obj['@id'])
+                self._no_lanes.append(obj['@id'])
 
     def finish(self, issues):
         issues.add_issue_type('todo/highway/trunk/no_maxspeed', _TRUNK_NO_MAXSPEED)

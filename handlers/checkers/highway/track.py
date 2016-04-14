@@ -24,12 +24,12 @@ _NO_SURFACE = {
 
 class HighwayTrackChecker(SimpleHandler):
     def __init__(self):
-        self._no_surface = set()
+        self._no_surface = []
 
     def process(self, obj):
         if obj.get('highway') == 'track' and obj['@type'] == 'way':
             if not 'surface' in obj:
-                self._no_surface.add(obj['@id'])
+                self._no_surface.append(obj['@id'])
 
     def finish(self, issues):
         issues.add_issue_type('todo/highway/track/no_surface', _NO_SURFACE)

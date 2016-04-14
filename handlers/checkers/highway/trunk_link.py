@@ -13,12 +13,12 @@ _TRUNK_LINK_NO_ONEWAY = {
 
 class HighwayTrunkLinkChecker(SimpleHandler):
     def __init__(self):
-        self._no_oneway = set()
+        self._no_oneway = []
 
     def process(self, obj):
         if obj['@type'] == 'way' and obj.get('highway') == 'trunk_link':
             if 'oneway' not in obj:
-                self._no_oneway.add(obj['@id'])
+                self._no_oneway.append(obj['@id'])
 
     def finish(self, issues):
         issues.add_issue_type('warnings/highway/trunk_link/no_oneway', _TRUNK_LINK_NO_ONEWAY)

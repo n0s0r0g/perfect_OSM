@@ -13,12 +13,12 @@ _NO_OPENING_HOURS = {
 
 class ShopChecker(SimpleHandler):
     def __init__(self):
-        self._no_opening_hours = set()
+        self._no_opening_hours = []
 
     def process(self, obj):
         if 'shop' in obj:
             if not 'opening_hours' in obj:
-                self._no_opening_hours.add((obj['@type'], obj['@id']))
+                self._no_opening_hours.append((obj['@type'], obj['@id']))
 
     def finish(self, issues):
         issues.add_issue_type('todo/shop/no_opening_hours', _NO_OPENING_HOURS)
