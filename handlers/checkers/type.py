@@ -12,7 +12,7 @@ _BAD_TYPE = {
 }
 
 _TAGS = {
-    'building': {AREA},
+    'building': {POINT, AREA}, # TODO: wiki doesn't allow POINT on building=*; tracked in todo/building/is_node
     'landuse': {AREA},
     'entrance': {POINT},
     'amenity': {POINT, AREA},
