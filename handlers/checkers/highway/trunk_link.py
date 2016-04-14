@@ -21,6 +21,6 @@ class HighwayTrunkLinkChecker(SimpleHandler):
                 self._no_oneway.add(obj['@id'])
 
     def finish(self, issues):
-        issues.add_issue_type('warnings/highway/trunk_link/no_oneway/', _TRUNK_LINK_NO_ONEWAY)
+        issues.add_issue_type('warnings/highway/trunk_link/no_oneway', _TRUNK_LINK_NO_ONEWAY)
         for way_id in self._no_oneway:
-            issues.add_issue_obj('warnings/highway/trunk_link/no_oneway/', 'way', way_id)
+            issues.add_issue_obj('warnings/highway/trunk_link/no_oneway', 'way', way_id)

@@ -55,10 +55,10 @@ class WayChecker(Handler):
         return iteration < 2
 
     def finish(self, issues):
-        issues.add_issue_type('errors/way/empty/', _EMPTY_WAY)
+        issues.add_issue_type('errors/way/empty', _EMPTY_WAY)
         for way_id in self._empty_ways:
-            issues.add_issue_obj('errors/way/empty/', 'way', way_id)
+            issues.add_issue_obj('errors/way/empty', 'way', way_id)
 
-        issues.add_issue_type('errors/way/useless/', _USELESS_WAY)
+        issues.add_issue_type('errors/way/useless', _USELESS_WAY)
         for way_id in self._useless_ways:
-            issues.add_issue_obj('errors/way/useless/', 'way', way_id)
+            issues.add_issue_obj('errors/way/useless', 'way', way_id)

@@ -26,6 +26,6 @@ class PhoneChecker(SimpleHandler):
                 break
 
     def finish(self, issues):
-        issues.add_issue_type('warnings/phone/bad_format/', _BAD_PHONE)
+        issues.add_issue_type('warnings/phone/bad_format', _BAD_PHONE)
         for obj_type, obj_id in self._bad_phone:
-            issues.add_issue_obj('warnings/phone/bad_format/', obj_type, obj_id)
+            issues.add_issue_obj('warnings/phone/bad_format', obj_type, obj_id)

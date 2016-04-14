@@ -50,6 +50,6 @@ class HighwayCrossingChecker(Handler):
             return False
 
     def finish(self, issues):
-        issues.add_issue_type('errors/highway/crossing/not_on_highway/', _CROSSING_NOT_ON_HIGHWAY)
+        issues.add_issue_type('errors/highway/crossing/not_on_highway', _CROSSING_NOT_ON_HIGHWAY)
         for node_id in self._not_on_road:
-            issues.add_issue_obj('errors/highway/crossing/not_on_highway/', 'node', node_id)
+            issues.add_issue_obj('errors/highway/crossing/not_on_highway', 'node', node_id)

@@ -65,6 +65,6 @@ class WebsiteChecker(SimpleHandler):
                 self._dead_links.append((obj['tag'], obj['id']))
 
     def finish(self, issues):
-        issues.add_issue_type('errors/website/not_available/', _DEAD_LINKS)
+        issues.add_issue_type('errors/website/not_available', _DEAD_LINKS)
         for obj_type, obj_id in self._dead_links:
-            issues.add_issue_obj('errors/website/not_available/', obj_type, obj_id)
+            issues.add_issue_obj('errors/website/not_available', obj_type, obj_id)

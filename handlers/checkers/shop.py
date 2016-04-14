@@ -21,6 +21,6 @@ class ShopChecker(SimpleHandler):
                 self._no_opening_hours.add((obj['@type'], obj['@id']))
 
     def finish(self, issues):
-        issues.add_issue_type('todo/shop/no_opening_hours/', _NO_OPENING_HOURS)
+        issues.add_issue_type('todo/shop/no_opening_hours', _NO_OPENING_HOURS)
         for obj_type, obj_id in self._no_opening_hours:
-            issues.add_issue_obj('todo/shop/no_opening_hours/', obj_type, obj_id)
+            issues.add_issue_obj('todo/shop/no_opening_hours', obj_type, obj_id)

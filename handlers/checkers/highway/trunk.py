@@ -63,14 +63,14 @@ class HighwayTrunkChecker(SimpleHandler):
                 self._no_lanes.add(obj['@id'])
 
     def finish(self, issues):
-        issues.add_issue_type('todo/highway/trunk/no_maxspeed/', _TRUNK_NO_MAXSPEED)
+        issues.add_issue_type('todo/highway/trunk/no_maxspeed', _TRUNK_NO_MAXSPEED)
         for way_id in self._no_maxspeed:
-            issues.add_issue_obj('todo/highway/trunk/no_maxspeed/', 'way', way_id)
+            issues.add_issue_obj('todo/highway/trunk/no_maxspeed', 'way', way_id)
 
-        issues.add_issue_type('todo/highway/trunk/no_lanes/', _TRUNK_NO_LANES)
+        issues.add_issue_type('todo/highway/trunk/no_lanes', _TRUNK_NO_LANES)
         for way_id in self._no_lanes:
-            issues.add_issue_obj('todo/highway/trunk/no_lanes/', 'way', way_id)
+            issues.add_issue_obj('todo/highway/trunk/no_lanes', 'way', way_id)
 
-        issues.add_issue_type('todo/highway/trunk/no_lit/', _TRUNK_NO_LIT)
+        issues.add_issue_type('todo/highway/trunk/no_lit', _TRUNK_NO_LIT)
         for way_id in self._no_lit:
-            issues.add_issue_obj('todo/highway/trunk/no_lit/', 'way', way_id)
+            issues.add_issue_obj('todo/highway/trunk/no_lit', 'way', way_id)

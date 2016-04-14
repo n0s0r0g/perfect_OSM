@@ -32,6 +32,6 @@ class HighwayTrackChecker(SimpleHandler):
                 self._no_surface.add(obj['@id'])
 
     def finish(self, issues):
-        issues.add_issue_type('todo/highway/track/no_surface/', _NO_SURFACE)
+        issues.add_issue_type('todo/highway/track/no_surface', _NO_SURFACE)
         for way_id in self._no_surface:
-            issues.add_issue_obj('todo/highway/track/no_surface/', 'way', way_id)
+            issues.add_issue_obj('todo/highway/track/no_surface', 'way', way_id)

@@ -57,9 +57,9 @@ class HighwaySurfaceChecker(SimpleHandler):
                     self._undoc_surface.append(obj['@id'])
 
     def finish(self, issues):
-        issues.add_issue_type('warnings/highway/surface/undocumented_value/', _UNDOC_SURFACE)
+        issues.add_issue_type('warnings/highway/surface/undocumented_value', _UNDOC_SURFACE)
         for way_id in self._undoc_surface:
-            issues.add_issue_obj('warnings/highway/surface/undocumented_value/', 'way', way_id)
-        issues.add_issue_type('todo/highway/surface/composite_value/', _COMPOSITE_SURFACE)
+            issues.add_issue_obj('warnings/highway/surface/undocumented_value', 'way', way_id)
+        issues.add_issue_type('todo/highway/surface/composite_value', _COMPOSITE_SURFACE)
         for way_id in self._composite_surface:
-            issues.add_issue_obj('todo/highway/surface/composite_value/', 'way', way_id)
+            issues.add_issue_obj('todo/highway/surface/composite_value', 'way', way_id)
