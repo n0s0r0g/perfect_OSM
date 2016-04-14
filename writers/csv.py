@@ -11,7 +11,8 @@ class CSVWriter(Writer):
         #    item - tuple:
         #        0 - obj_type ('node', 'way', 'relation')
         #        1 - obj_id (int, osm object id)
-        #        2 - title (str)
+        #        2 - issue_type_id
+        #        3 - title (str)
         self._output = []
 
         # _resolve_node_loc - set:
