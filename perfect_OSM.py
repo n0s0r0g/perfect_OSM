@@ -21,6 +21,7 @@ from handlers.checkers.highway.surface import HighwaySurfaceChecker
 from handlers.checkers.type import TypeChecker
 from handlers.checkers.phone import PhoneChecker
 from handlers.checkers.building.building import BuildingChecker
+from handlers.checkers.relation.relation import RelationChecker
 
 from writers.issues import Issues
 from writers.compositewriter import CompositeWriter
@@ -100,6 +101,7 @@ if __name__ == '__main__':
     composite_handler.add_handler(TypeChecker())
     composite_handler.add_handler(PhoneChecker())
     composite_handler.add_handler(BuildingChecker())
+    composite_handler.add_handler(RelationChecker())
     # End of handlers
 
     # Writers
