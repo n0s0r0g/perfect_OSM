@@ -6,7 +6,7 @@ _BAD_MEMBERS = {
 }
 
 
-class MultipologonChecker(Handler):
+class MultipolygonChecker(Handler):
     def __init__(self):
         self._bad_members = []
 

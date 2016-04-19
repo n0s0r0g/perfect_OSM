@@ -22,7 +22,7 @@ from handlers.checkers.type import TypeChecker
 from handlers.checkers.phone import PhoneChecker
 from handlers.checkers.building.building import BuildingChecker
 from handlers.checkers.relation.relation import RelationChecker
-from handlers.checkers.relation.multipolygon import MultipologonChecker
+from handlers.checkers.relation.multipolygon import MultipolygonChecker
 from handlers.checkers.fixme import FixmeChecker
 
 from writers.issues import Issues
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     composite_handler.add_handler(PhoneChecker())
     composite_handler.add_handler(BuildingChecker())
     composite_handler.add_handler(RelationChecker())
-    composite_handler.add_handler(MultipologonChecker())
+    composite_handler.add_handler(MultipolygonChecker())
     composite_handler.add_handler(FixmeChecker())
     # End of handlers
 
