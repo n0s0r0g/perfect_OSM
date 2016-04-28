@@ -16,6 +16,7 @@ from handlers.checkers.highway.track import HighwayTrackChecker
 from handlers.checkers.shop import ShopChecker
 from handlers.checkers.highway.crossing import HighwayCrossingChecker
 from handlers.checkers.highway.traffic_calming import HighwayTrafficCalmingChecker
+from handlers.checkers.highway.traffic_signals import HighwayTrafficSignalsChecker
 from handlers.checkers.website import WebsiteChecker
 from handlers.checkers.highway.surface import HighwaySurfaceChecker
 from handlers.checkers.type import TypeChecker
@@ -98,6 +99,7 @@ if __name__ == '__main__':
     composite_handler.add_handler(ShopChecker())
     composite_handler.add_handler(HighwayCrossingChecker())
     composite_handler.add_handler(HighwayTrafficCalmingChecker())
+    composite_handler.add_handler(HighwayTrafficSignalsChecker())
     # composite_handler.add_handler(WebsiteChecker()) # very slow - opens every website from the map!
     composite_handler.add_handler(HighwaySurfaceChecker())
     composite_handler.add_handler(TypeChecker())
