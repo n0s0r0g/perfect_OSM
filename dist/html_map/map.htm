@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Perfect OSM: issues</title>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2/leaflet.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2/leaflet.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<link rel="stylesheet" href="misc/mobile.css" />
+	<link rel="stylesheet" href="misc/MarkerCluster.css" />
+	<link rel="stylesheet" href="misc/MarkerCluster.Default.css" />
+	<script src="misc/leaflet.markercluster-src.js"></script>
+	<script src="markers.js"></script>
+</head>
+<body>
+	<div id="map"></div>
+	<script type="text/javascript">
+		var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+				attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+			}),
+			latlng = L.latLng(57.66, 93.87);
+		var map = L.map('map', {center: latlng, zoom: 2, layers: [tiles]});
+		var markers = L.markerClusterGroup();
+		for (var i = 0; i < markerPoints.length; i++) {
+			var a = markerPoints[i];
+			var title = a[2];
+			var marker = L.marker(L.latLng(a[0], a[1]), { title: title });
+			marker.bindPopup(title);
+			markers.addLayer(marker);
+		}
+		map.addLayer(markers);
+	</script>
+</body>
+</html>
