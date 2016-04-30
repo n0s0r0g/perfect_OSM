@@ -1,3 +1,5 @@
+import re
+
 from handlers.simplehandler import SimpleHandler
 
 _TRUNK_NO_MAXSPEED = {
@@ -46,12 +48,72 @@ _TRUNK_NO_LANES = {
 """,
 }
 
+_TRUNK_NO_REF = {
+    'title':'Не указан учетный номер дороги',
+    'help_text':'http://wiki.openstreetmap.org/wiki/RU:Key:ref',
+}
+
+_TRUNK_BAD_REF = {
+    'title': 'Некорректный учетный номер дороги',
+    'help_text': 'http://wiki.openstreetmap.org/wiki/RU:Key:ref',
+}
+
+_ref_re = (
+    # Дороги федерального значения
+    re.compile('^М-\d{1,}$'),
+    re.compile('^Р-\d{2,}$'),
+    re.compile('^А-\d{3,}$'),
+
+    # Дороги регионального и межмуниципального значения
+    re.compile('^\d{2}[РАКН]-\d{1,}$'),
+)
+
+
+def _check_ref(ref):
+    if ';' in ref:
+        items = ref.split(';')
+    else:
+        items = [ref]
+    for item in items:
+        valid = False
+        for _re in _ref_re:
+            if _re.match(item):
+                valid = True
+                break
+        if not valid:
+            return False
+    return True
+
+
+_int_ref_re = (
+    re.compile('^E \d{2,}$'), # Европейские маршруты
+    re.compile('^AH\d{1,}$'), # Азиатские маршруты
+)
+
+
+def _check_int_ref(ref):
+    if ';' in ref:
+        items = ref.split(';')
+    else:
+        items = [ref]
+    for item in items:
+        valid = False
+        for _re in _int_ref_re:
+            if _re.match(item):
+                valid = True
+                break
+        if not valid:
+            return False
+    return True
+
 
 class HighwayTrunkChecker(SimpleHandler):
     def __init__(self):
         self._no_maxspeed = []
         self._no_lit = []
         self._no_lanes = []
+        self._no_ref = []
+        self._bad_ref = []
 
     def process(self, obj):
         if obj['@type'] == 'way' and obj.get('highway') == 'trunk':
@@ -61,6 +123,14 @@ class HighwayTrunkChecker(SimpleHandler):
                 self._no_lit.append(obj['@id'])
             if 'lanes' not in obj:
                 self._no_lanes.append(obj['@id'])
+            if not ('ref' in obj or 'int_ref' in obj or 'name' in obj):
+                self._no_ref.append(obj['@id'])
+            if 'ref' in obj:
+                if not _check_ref(obj['ref']):
+                    self._bad_ref.append(obj['@id'])
+            if 'int_ref' in obj:
+                if not _check_int_ref(obj['int_ref']):
+                    self._bad_ref.append(obj['@id'])
 
     def finish(self, issues):
         issues.add_issue_type('todo/highway/trunk/no_maxspeed', _TRUNK_NO_MAXSPEED)
@@ -74,3 +144,11 @@ class HighwayTrunkChecker(SimpleHandler):
         issues.add_issue_type('todo/highway/trunk/no_lit', _TRUNK_NO_LIT)
         for way_id in self._no_lit:
             issues.add_issue_obj('todo/highway/trunk/no_lit', 'way', way_id)
+
+        issues.add_issue_type('todo/highway/trunk/no_ref', _TRUNK_NO_REF)
+        for way_id in self._no_ref:
+            issues.add_issue_obj('todo/highway/trunk/no_ref', 'way', way_id)
+
+        issues.add_issue_type('errors/highway/trunk/bad_ref', _TRUNK_BAD_REF)
+        for way_id in self._bad_ref:
+            issues.add_issue_obj('errors/highway/trunk/bad_ref', 'way', way_id)
