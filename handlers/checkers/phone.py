@@ -7,7 +7,7 @@ _BAD_PHONE = {
     'help_text': """Номер телефона указан в некорректном формате.""",
 }
 
-_PHONE_RE = re.compile(r'\+(?P<country>\d+)(?P<delim>[- ])(?P<area>\d+)(?P=delim)(?P<local>\d+)')
+_PHONE_RE = re.compile(r'^\+(?P<country>\d+)(?P<delim>[- ])(?P<area>\d+)(?P=delim)(?P<local>\d+)$')
 
 
 class PhoneChecker(SimpleHandler):
@@ -21,9 +21,18 @@ class PhoneChecker(SimpleHandler):
                 phones.append(obj[tag])
 
         for phone in phones:
-            if not _PHONE_RE.match(phone):
+            bad_phone = False
+            # TODO: Document in Wiki - multiple phone numbers separated by ';'
+            if ';' in phone:
+                items = phone.split(';')
+            else:
+                items = [phone]
+            for item in items:
+                if not _PHONE_RE.match(item):
+                    bad_phone = True
+                    break
+            if bad_phone:
                 self._bad_phone.append((obj['@type'], obj['@id']))
-                break
 
     def finish(self, issues):
         issues.add_issue_type('warnings/phone/bad_format', _BAD_PHONE)
