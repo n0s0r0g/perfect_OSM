@@ -7,7 +7,10 @@ from handlers.simplehandler import SimpleHandler
 _USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
 _TIMEOUT = 10
 
-_DEAD_LINKS = """Сайт, указанный в теге website, contact:website, url или source_ref недоступен."""
+_DEAD_LINK = {
+    'title':'Сайт недоступен',
+    'help_text':"""Сайт, указанный в теге website, contact:website, url или source_ref недоступен.""",
+}
 
 
 class WebsiteChecker(SimpleHandler):
@@ -62,9 +65,9 @@ class WebsiteChecker(SimpleHandler):
                     dead_link = True
                     break
             if dead_link:
-                self._dead_links.append((obj['tag'], obj['id']))
+                self._dead_links.append((obj['@type'], obj['@id']))
 
     def finish(self, issues):
-        issues.add_issue_type('errors/website/not_available', _DEAD_LINKS)
+        issues.add_issue_type('errors/website/not_available', _DEAD_LINK)
         for obj_type, obj_id in self._dead_links:
             issues.add_issue_obj('errors/website/not_available', obj_type, obj_id)
