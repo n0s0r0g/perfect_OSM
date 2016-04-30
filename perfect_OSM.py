@@ -25,6 +25,7 @@ from handlers.checkers.building.building import BuildingChecker
 from handlers.checkers.relation.relation import RelationChecker
 from handlers.checkers.relation.multipolygon import MultipolygonChecker
 from handlers.checkers.fixme import FixmeChecker
+from handlers.checkers.addr.street import StreetChecker
 
 from writers.issues import Issues
 from writers.compositewriter import CompositeWriter
@@ -108,6 +109,7 @@ if __name__ == '__main__':
     composite_handler.add_handler(RelationChecker())
     composite_handler.add_handler(MultipolygonChecker())
     composite_handler.add_handler(FixmeChecker())
+    composite_handler.add_handler(StreetChecker())
     # End of handlers
 
     # Writers
