@@ -15,7 +15,7 @@ _TAGS = {
     'building': {POINT, AREA}, # TODO: wiki doesn't allow POINT on building=*; tracked in todo/building/is_node
     'landuse': {AREA},
     'entrance': {POINT},
-    'amenity': {POINT, AREA},
+    'amenity': {POINT, LINE, AREA, RELATION}, # TODO: wiki doesn't allow LINE on amenity=*
 }
 
 _TAG_VALUES = {
