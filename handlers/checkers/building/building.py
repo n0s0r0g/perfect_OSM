@@ -23,7 +23,7 @@ class BuildingChecker(SimpleHandler):
         if 'building' in obj:
             if obj['@type'] == 'node':
                 self._building_on_node.append(obj['@id'])
-            if obj['building'] in _ADDR_BUILDING_TYPES and ('addr:street' not in obj or 'addr:housenumber' not in obj):
+            if obj['building'] in _ADDR_BUILDING_TYPES and 'addr:housenumber' not in obj:
                 self._no_addr.append((obj['@type'], obj['@id']))
 
     def finish(self, issues):
