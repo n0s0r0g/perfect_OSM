@@ -97,21 +97,32 @@ class GPXWriter(Writer):
 
             for obj_type, obj_id, title in disp_objs:
                 if obj_type == 'node':
-                    lat, lon = self._node_loc[obj_id]
+                    tmp = self._node_loc.get(obj_id)
+                    if tmp is None:
+                        continue
+                    lat, lon = tmp
                     waypoints.append((lat, lon, title))
-
                 elif obj_type == 'way':
                     nodes = self._way_nodes[obj_id]
 
                     first_node_id = nodes[0]
-                    lat, lon = self._node_loc[first_node_id]
+                    tmp = self._node_loc.get(first_node_id)
+                    if tmp is None:
+                        continue
+                    lat, lon = tmp
                     waypoints.append((lat, lon, title))
 
                     track = []
+                    bad_track = False
                     for node_id in nodes:
-                        lat, lon = self._node_loc[node_id]
+                        tmp = self._node_loc.get(node_id)
+                        if tmp is None:
+                            bad_track = True
+                            break
+                        lat, lon = tmp
                         track.append((lat, lon))
-                    tracks.append(track)
+                    if not bad_track:
+                        tracks.append(track)
 
                 elif obj_type == 'relation':
                     # TODO: implement relation -> gpx
