@@ -24,7 +24,7 @@ class PhoneChecker(SimpleHandler):
             bad_phone = False
             # TODO: Document in Wiki - multiple phone numbers separated by ';'
             if ';' in phone:
-                items = phone.split(';')
+                items = [tmp.lstrip(' ') for tmp in phone.split(';') ]
             else:
                 items = [phone]
             for item in items:

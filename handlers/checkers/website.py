@@ -58,7 +58,7 @@ class WebsiteChecker(SimpleHandler):
             if url_tag in obj:
                 if ';' in obj[url_tag]:
                     for url in obj[url_tag].split(';'):
-                        urls.append(url)
+                        urls.append(url.lstrip(' '))
                 else:
                     urls.append(obj[url_tag])
 

@@ -45,7 +45,7 @@ class HighwaySurfaceChecker(SimpleHandler):
                 if ';' in surface:
                     documented = True
                     for surface_part in surface.split(';'):
-                        surface_part = surface_part.strip('\n\r\t ')
+                        surface_part = surface_part.lstrip(' ')
                         if surface_part not in _DOCUMENTED_VALUES:
                             documented = False
                             break
