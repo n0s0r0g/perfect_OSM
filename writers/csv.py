@@ -15,25 +15,12 @@ class CSVWriter(Writer):
         #        3 - title (str)
         self._output = []
 
-        # _resolve_node_loc - set:
-        #     item: node_id (int, osm object id)
-        self._resolve_node_loc = set()
-
-        # _node_loc - dict:
-        #     key - node_id (int, osm node id)
-        #     value - tuple (node_lat, node_lon)
-        self._node_loc = dict()
-
-        ## way location
-
-        # _way_first_node:
-        #     key = way_id (int, osm way id)
-        #     value - first node_id
-        self._way_first_node = dict()
-
-        # _resolve_way_node_loc = set:
-        #     value: node_id (int, osm object id)
-        self._resolve_way_node_loc = set()
+        self._resolve_relations = set()
+        self._relations = dict()
+        self._resolve_ways = set()
+        self._ways = dict()
+        self._resolve_nodes = set()
+        self._nodes = dict()
 
     def process_issues(self, issue_types, issues):
         for issue_type_id, issue_objs_list in issues.items():
@@ -43,48 +30,84 @@ class CSVWriter(Writer):
                     obj_type, obj_id = issue_objs['obj']
                     self._output.append((obj_type, obj_id, issue_type_id, title))
                     if obj_type == 'node':
-                        self._resolve_node_loc.add(obj_id)
+                        self._resolve_nodes.add(obj_id)
                     if obj_type == 'way':
-                        self._way_first_node[obj_id] = None
+                        self._resolve_ways.add(obj_id)
                     if obj_type == 'relation':
-                        pass  # TODO: implement relation geometry to csv
+                        self._resolve_relations.add(obj_id)
 
     def process_geometry(self, obj, iteration):
         if iteration == 0:
-            # find (lat, lon) for nodes from self._resolve_node_loc
-            if obj['@type'] == 'node' and obj['@id'] in self._resolve_node_loc:
-                self._node_loc[obj['@id']] = (obj['@lat'], obj['@lon'])
-            # find first node for ways from self._way_first_node
-            # and add this node to self._resolve_way_node_loc
-            if obj['@type'] == 'way' and obj['@id'] in self._way_first_node:
-                self._way_first_node[obj['@id']] = obj['@nodes'][0]
-                self._resolve_way_node_loc.add(obj['@nodes'][0])
+            self._process_relations(obj)
         elif iteration == 1:
-            if obj['@type'] == 'node' and obj['@id'] in self._resolve_way_node_loc:
-                self._node_loc[obj['@id']] = (obj['@lat'], obj['@lon'])
+            self._process_ways(obj)
+        elif iteration == 2:
+            self._process_nodes(obj)
+
+    def _process_relations(self, obj):
+        if obj['@type'] == 'relation' and obj['@id'] in self._resolve_relations:
+            has_node = False
+            for m in obj['@members']:
+                if m['type'] == 'node':
+                    has_node = True
+                    node_id = m['ref']
+                    break
+            if has_node:
+                self._relations[obj['@id']] = ('node', node_id)
+                self._resolve_nodes.add(node_id)
+            else:
+                has_way = False
+                for m in obj['@members']:
+                    if m['type'] == 'way':
+                        has_way = True
+                        way_id = m['ref']
+                        break
+                if has_way:
+                    self._relations[obj['@id']] = ('way', way_id)
+                    self._resolve_ways.add(way_id)
+                else:
+                    # FIXME: relations of relations are not yet supported
+                    self._relations[obj['@id']] = None
+
+    def _process_ways(self, obj):
+        if obj['@type'] == 'way' and obj['@id'] in self._resolve_ways:
+            first_node = obj['@nodes'][0]
+            self._resolve_nodes.add(first_node)
+            self._ways[obj['@id']] = first_node
+
+    def _process_nodes(self, obj):
+        if obj['@type'] == 'node' and obj['@id'] in self._resolve_nodes:
+            self._nodes[obj['@id']] = (obj['@lat'], obj['@lon'])
 
     def is_iteration_required(self, iteration):
-        if iteration == 0:
-            return self._resolve_node_loc or self._way_first_node
-        elif iteration == 1:
-            return self._resolve_way_node_loc
-        else:
-            return False
+        return iteration < 3
+
+    def _get_marker(self, obj_type, obj_id):
+        if obj_type == 'relation':
+            tmp = self._relations.get(obj_id)
+            if tmp is None:
+                return None
+            tmp_type, tmp_id = tmp
+            if tmp_type == 'node':
+                coord = self._nodes.get(tmp_id)
+            if tmp_type == 'way':
+                coord = self._nodes.get(self._ways.get(tmp_id))
+        if obj_type == 'way':
+            coord = self._nodes.get(self._ways.get(obj_id))
+        if obj_type == 'node':
+            coord = self._nodes.get(obj_id)
+        return coord
 
     def save(self):
         markers = []
 
         for obj_type, obj_id, issue_type_id, title in self._output:
-            if obj_type == 'node':
-                lat, lon = self._node_loc[obj_id]
-                markers.append((lat, lon, obj_type, obj_id, issue_type_id, title))
-            elif obj_type == 'way':
-                first_node_id = self._way_first_node[obj_id]
-                lat, lon = self._node_loc.get(first_node_id, ('', ''))
-                markers.append((lat, lon, obj_type, obj_id, issue_type_id, title))
-            elif obj_type == 'relation':
-                # TODO: implement relation geometry to csv
-                markers.append(('', '', obj_type, obj_id, issue_type_id, title))
+            coord = self._get_marker(obj_type, obj_id)
+            if coord is None:
+                lat, lon  = '', ''
+            else:
+                lat, lon = coord
+            markers.append((lat, lon, obj_type, obj_id, issue_type_id, title))
 
         # prepare csv file content
         l = []
