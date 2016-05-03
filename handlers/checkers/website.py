@@ -56,7 +56,11 @@ class WebsiteChecker(SimpleHandler):
         urls = []
         for url_tag in 'website', 'contact:website', 'url', 'source_ref':
             if url_tag in obj:
-                urls.append(obj[url_tag])
+                if ';' in obj[url_tag]:
+                    for url in obj[url_tag].split(';'):
+                        urls.append(url)
+                else:
+                    urls.append(obj[url_tag])
 
         if urls:
             dead_link = False
