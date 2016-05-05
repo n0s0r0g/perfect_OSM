@@ -1,5 +1,6 @@
 import re
 
+from common.routines import composite_value
 from handlers.simplehandler import SimpleHandler
 
 _TRUNK_NO_MAXSPEED = {
@@ -49,12 +50,12 @@ _TRUNK_NO_LANES = {
 }
 
 _TRUNK_NO_REF = {
-    'title':'Не указан учетный номер дороги',
+    'title':'Не указан учетный номер автомобильной дороги',
     'help_text':'http://wiki.openstreetmap.org/wiki/RU:Key:ref',
 }
 
 _TRUNK_BAD_REF = {
-    'title': 'Некорректный учетный номер дороги',
+    'title': 'Некорректный учетный номер автомобильной дороги',
     'help_text': 'http://wiki.openstreetmap.org/wiki/RU:Key:ref',
 }
 
@@ -66,14 +67,12 @@ _ref_re = (
 
     # Дороги регионального и межмуниципального значения
     re.compile('^\d{2}[РАКН]-\d{1,}$'),
+    re.compile('^\d{2}-\d{3}[РАКН]-\d{1,}$'), # FIXME: не отражено в Wiki
 )
 
 
 def _check_ref(ref):
-    if ';' in ref:
-        items = ref.split(';')
-    else:
-        items = [ref]
+    items = composite_value(ref)
     for item in items:
         valid = False
         for _re in _ref_re:
@@ -92,10 +91,7 @@ _int_ref_re = (
 
 
 def _check_int_ref(ref):
-    if ';' in ref:
-        items = ref.split(';')
-    else:
-        items = [ref]
+    items = composite_value(ref)
     for item in items:
         valid = False
         for _re in _int_ref_re:
