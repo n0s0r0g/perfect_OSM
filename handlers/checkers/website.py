@@ -2,6 +2,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from common.routines import composite_value
 from handlers.simplehandler import SimpleHandler
 
 _USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
@@ -56,11 +57,9 @@ class WebsiteChecker(SimpleHandler):
         urls = []
         for url_tag in 'website', 'contact:website', 'url', 'source_ref':
             if url_tag in obj:
-                if ';' in obj[url_tag]:
-                    for url in obj[url_tag].split(';'):
-                        urls.append(url.lstrip(' '))
-                else:
-                    urls.append(obj[url_tag])
+                items = composite_value(obj[url_tag])
+                for item in items:
+                    urls.append(item)
 
         if urls:
             dead_link = False
