@@ -1,3 +1,4 @@
+from common.routines import composite_value
 from handlers.simplehandler import SimpleHandler
 
 _COMPOSITE_SURFACE = {
@@ -44,9 +45,9 @@ class HighwaySurfaceChecker(SimpleHandler):
             if surface not in _DOCUMENTED_VALUES:
                 if ';' in surface:
                     documented = True
-                    for surface_part in surface.split(';'):
-                        surface_part = surface_part.lstrip(' ')
-                        if surface_part not in _DOCUMENTED_VALUES:
+                    items = composite_value(surface)
+                    for item in items:
+                        if item not in _DOCUMENTED_VALUES:
                             documented = False
                             break
                     if documented:
