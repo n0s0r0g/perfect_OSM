@@ -12,8 +12,8 @@ def parse(osm_fn, f):
                 obj['@' + k] = elem.get(k)
 
             if elem.tag == 'node':
-                for k in ['lon', 'lat']:
-                    obj['@' + k] = elem.get(k)
+                obj['@lon'] = elem.get('lon')
+                obj['@lat'] = elem.get('lat')
                 for p in elem.iter():
                     if p.tag == 'tag':
                         obj[p.get('k')] = p.get('v')
