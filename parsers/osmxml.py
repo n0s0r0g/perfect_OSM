@@ -7,13 +7,18 @@ def parse(osm_fn, f):
     event, root = next(context)
     for event, elem in context:
         if event == "end" and elem.tag in {'node', 'way', 'relation'}:
-            obj = {'@type': elem.tag, '@id': int(elem.get('id'))}
-            for k in 'user', 'timestamp', 'version', 'changeset':
-                obj['@' + k] = elem.get(k)
+            obj = {
+                '@type': elem.tag,
+                '@id': int(elem.get('id')),
+                '@user': elem.get('user'),
+                '@timestamp': elem.get('timestamp'),
+                '@version': elem.get('version'),
+                '@changeset': elem.get('changeset'),
+            }
 
             if elem.tag == 'node':
-                for k in ['lon', 'lat']:
-                    obj['@' + k] = elem.get(k)
+                obj['@lon'] = elem.get('lon')
+                obj['@lat'] = elem.get('lat')
                 for p in elem.iter():
                     if p.tag == 'tag':
                         obj[p.get('k')] = p.get('v')
